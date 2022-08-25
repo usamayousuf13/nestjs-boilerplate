@@ -3,11 +3,11 @@ import { WeatherService } from './weather.service';
 
 @Controller('app')
 export class WeatherController {
-  constructor(private readonly WeatherService: WeatherService) {}
+  constructor(private readonly WeatherService: WeatherService) { }
 
   @Get()
-  public root()  {
-    const response = this.WeatherService;
+  public getWeather() {
+    const response = this.WeatherService.getWeather();
     return response;
   }
 }
