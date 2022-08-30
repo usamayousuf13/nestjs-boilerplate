@@ -12,15 +12,18 @@ export class WeatherService {
   constructor(private readonly httpService: HttpService,
     @InjectModel(Weather.name) private readonly weatherModel: Model<WeatherDocument>,) { }
 
-  async getWeather(latitude, longitude): Promise<Observable<AxiosResponse<any>>> {
-    const response = this.httpService.get(WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${APP_ID}`).pipe(
-      map(response => response.data));
-    let createWeatherResponse = {
-      url: WEATHER_FORCAST,
-      response: JSON.stringify(response),
-      timestamp: Date.now()
-    }
-    await this.weatherModel.create(createWeatherResponse);
-    return response;
+  async getWeather(latitude, longitude): Promise<Weather> {
+    let createWeatherResponse;
+    this.httpService.get(WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${APP_ID}`).pipe(
+      map(response => response.data)).subscribe(resp => {
+        createWeatherResponse = {
+          url: WEATHER_FORCAST,
+          response: JSON.stringify(resp),
+          timestamp: Date.now()
+        }
+        this.weatherModel.create(createWeatherResponse);
+      });
+    return createWeatherResponse;
+
   }
 }

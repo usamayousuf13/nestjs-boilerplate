@@ -6,9 +6,10 @@ export class WeatherController {
   constructor(private readonly WeatherService: WeatherService) { }
 
   @Get('get-weather')
-  public getWeather(@Query('lat') lat: string,
+  public async getWeather(@Query('lat') lat: string,
     @Query('long') long: string) {
-    const response = this.WeatherService.getWeather(lat, long);
+    const response = await this.WeatherService.getWeather(lat, long);
+    console.log("hello ===> ", response);
     return response;
   }
 }
