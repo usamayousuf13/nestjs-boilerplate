@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import { Observable, map } from 'rxjs';
+import { Observable, map, lastValueFrom } from 'rxjs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { WEATHER_FORCAST, APP_ID } from '../util/constants';
@@ -14,16 +14,29 @@ export class WeatherService {
 
   async getWeather(latitude, longitude): Promise<Weather> {
     let createWeatherResponse;
-    this.httpService.get(WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${APP_ID}`).pipe(
-      map(response => response.data)).subscribe(resp => {
-        createWeatherResponse = {
-          url: WEATHER_FORCAST,
-          response: JSON.stringify(resp),
-          timestamp: Date.now()
-        }
-        this.weatherModel.create(createWeatherResponse);
-      });
-    return createWeatherResponse;
+    const response = await lastValueFrom(this.httpService.get(WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${APP_ID}`).pipe(
+      map(response => response.data))
+    );
+    createWeatherResponse = {
+      url: WEATHER_FORCAST,
+      response: JSON.stringify(response),
+      timestamp: Date.now()
+    }
+    return await this.weatherModel.create(createWeatherResponse);
+  }
 
+  async findAll(): Promise<Weather[]> {
+    return this.weatherModel.find().exec();
+  }
+
+  async findOne(id: string): Promise<Weather> {
+    return this.weatherModel.findOne({ _id: id }).exec();
+  }
+
+  async delete(id: string) {
+    const deletedWeather = await this.weatherModel
+      .findByIdAndRemove({ _id: id })
+      .exec();
+    return deletedWeather;
   }
 }
