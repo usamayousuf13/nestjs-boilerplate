@@ -1,6 +1,6 @@
 import { Get, Controller, Query, Param, Delete } from '@nestjs/common';
 import { WeatherService } from './weather.service';
-import { Weather, WeatherDocument } from '../../mongoose/schema/weather.schema';
+import { Weather } from '../../mongoose/schema/weather.schema';
 
 @Controller('weather')
 export class WeatherController {

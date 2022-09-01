@@ -1,28 +1,33 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, } from '@nestjs/common';
-import { AxiosResponse } from 'axios';
-import { Observable, map, lastValueFrom } from 'rxjs';
+import { map, lastValueFrom } from 'rxjs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { WEATHER_FORCAST, APP_ID } from '../util/constants';
+import { ConfigService } from '@nestjs/config';
 import { Weather, WeatherDocument } from '../../mongoose/schema/weather.schema';
 
 @Injectable()
 export class WeatherService {
   constructor(private readonly httpService: HttpService,
-    @InjectModel(Weather.name) private readonly weatherModel: Model<WeatherDocument>,) { }
+    @InjectModel(Weather.name) private readonly weatherModel: Model<WeatherDocument>,
+    private readonly configService: ConfigService) { }
 
   async getWeather(latitude, longitude): Promise<Weather> {
-    let createWeatherResponse;
-    const response = await lastValueFrom(this.httpService.get(WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${APP_ID}`).pipe(
-      map(response => response.data))
-    );
-    createWeatherResponse = {
-      url: WEATHER_FORCAST,
-      response: JSON.stringify(response),
-      timestamp: Date.now()
+    try {
+      const weatherConstant = this.configService.get('WEATHER');
+      let createWeatherResponse;
+      const response = await lastValueFrom(this.httpService.get(weatherConstant.WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${weatherConstant.APP_ID}`).pipe(
+        map(response => response.data))
+      );
+      createWeatherResponse = {
+        url: weatherConstant.WEATHER_FORCAST,
+        response: JSON.stringify(response),
+        timestamp: Date.now()
+      }
+      return await this.weatherModel.create(createWeatherResponse);
+    } catch (e) {
+      console.log("error: ", e);
     }
-    return await this.weatherModel.create(createWeatherResponse);
   }
 
   async findAll(): Promise<Weather[]> {
