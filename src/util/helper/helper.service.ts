@@ -1,3 +1,11 @@
+/*  
+    -   All application level helper functions reside here
+    -   Need to be imported in feature module file in imports section,
+        then create instance of helperService by defining in constructor parameter 
+        of any other controller or service as:
+            private readonly helperService: HelperService
+        
+*/
 
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -23,6 +31,7 @@ export class HelperService {
         }
     };
 
+    // Generic API response object with pagination and errors to be used application wide
     apiResponse({
         data = {},
         status = 1,
@@ -39,6 +48,7 @@ export class HelperService {
         };
     }
 
+    // calls ORM create function to write error log in DB
     logErrorToDB(errorObject) {
         this.errorLogsModel.create(errorObject);
     };

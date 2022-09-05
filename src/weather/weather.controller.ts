@@ -10,8 +10,10 @@ export class WeatherController {
     private readonly helperService: HelperService,
     private appLogger: AppLogger) { }
 
-  // http://localhost:3001/weather/get-weather-from-api?lat=22&long=32
+  // URL - /weather/get-weather-from-api?lat=22&long=32
   @Get('get-weather-from-api')
+
+  // Takes latitude and longitude from user (URL) and trigger third party API to get response and also stores in DB
   public async getWeather(@Query('lat') lat: string,
     @Query('long') long: string) {
     try {
@@ -22,7 +24,8 @@ export class WeatherController {
         message: "Success",
       });
     } catch (error) {
-      this.appLogger.customLog(error.response.data, error.response.status, error, error.message);
+      // logs error in DB
+      this.appLogger.saveErrorLog(error.response.data, error.response.status, error, error.message);
       return this.helperService.apiResponse({
         status: this.helperService.setErrorStatus(error),
         errors: error,
@@ -31,13 +34,13 @@ export class WeatherController {
     }
   }
 
-  // http://localhost:3001/weather/get-all
+  // URL - /weather/get-all
   @Get('get-all')
   async findAll(): Promise<Weather[]> {
     return this.weatherService.findAll();
   }
 
-  // http://localhost:3001/weather/630ca92339d32b087398f24f
+  // URL - /weather/630ca92339d32b087398f24f
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Weather> {
     return this.weatherService.findOne(id);

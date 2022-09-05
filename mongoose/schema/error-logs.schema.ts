@@ -1,3 +1,10 @@
+/* 
+    Generic error logs schema
+    Import in any feature module file as:
+    - MongooseModule.forFeature([{ name: ErrorLogs.name, schema: ErrorLogsSchema }
+*/
+
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 

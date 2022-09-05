@@ -8,7 +8,7 @@ import constant from './util/constant';
     isGlobal: true,
     load: [constant],
   }),
-  MongooseModule.forRoot('mongodb://localhost:27017/weather-app'),
+  MongooseModule.forRoot(process.env.MONGO_URL),
     WeatherModule,
   ],
   controllers: [],

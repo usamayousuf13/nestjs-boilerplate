@@ -1,3 +1,8 @@
+/* 
+    Simple weather schema
+    used to store API response from third party weather API in mongoDB collection
+*/
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
