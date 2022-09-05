@@ -7,13 +7,16 @@ export type ErrorLogsDocument = ErrorLogs & Document;
 export class ErrorLogs {
 
     @Prop()
-    code: string;
+    data: string;
+
+    @Prop()
+    status: string;
+
+    @Prop()
+    error: string;
 
     @Prop()
     message: string;
-
-    @Prop()
-    log: string;
 
     @Prop()
     timestamp: string;

@@ -1,10 +1,14 @@
 
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { ErrorLogs, ErrorLogsDocument } from '../../../mongoose/schema/error-logs.schema';
 
 @Injectable()
 export class HelperService {
-    constructor(private readonly configService: ConfigService,) { }
+    constructor(private readonly configService: ConfigService,
+        @InjectModel(ErrorLogs.name) private readonly errorLogsModel: Model<ErrorLogsDocument>) { }
 
     // error status checker
     setErrorStatus(error) {
@@ -17,7 +21,8 @@ export class HelperService {
         else {
             return responseStatusCodes.ERROR
         }
-    }
+    };
+
     apiResponse({
         data = {},
         status = 1,
@@ -34,6 +39,8 @@ export class HelperService {
         };
     }
 
-
+    logErrorToDB(errorObject) {
+        this.errorLogsModel.create(errorObject);
+    };
 
 }

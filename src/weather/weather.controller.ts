@@ -2,10 +2,13 @@ import { Get, Controller, Query, Param, Delete } from '@nestjs/common';
 import { WeatherService } from './weather.service';
 import { Weather } from '../../mongoose/schema/weather.schema';
 import { HelperService } from '../util/helper/helper.service';
+import { AppLogger } from '../logger/app-logger.service';
+
 @Controller('weather')
 export class WeatherController {
   constructor(private readonly weatherService: WeatherService,
-    private readonly helperService: HelperService) { }
+    private readonly helperService: HelperService,
+    private appLogger: AppLogger) { }
 
   // http://localhost:3001/weather/get-weather-from-api?lat=22&long=32
   @Get('get-weather-from-api')
@@ -19,6 +22,7 @@ export class WeatherController {
         message: "Success",
       });
     } catch (error) {
+      this.appLogger.customLog(error.response.data, error.response.status, error, error.message);
       return this.helperService.apiResponse({
         status: this.helperService.setErrorStatus(error),
         errors: error,
