@@ -8,22 +8,29 @@ import { Weather, WeatherDocument } from '../../mongoose/schema/weather.schema';
 
 @Injectable()
 export class WeatherService {
-  constructor(private readonly httpService: HttpService,
-    @InjectModel(Weather.name) private readonly weatherModel: Model<WeatherDocument>,
-    private readonly configService: ConfigService
-  ) { }
+  constructor(
+    private readonly httpService: HttpService,
+    @InjectModel(Weather.name)
+    private readonly weatherModel: Model<WeatherDocument>,
+    private readonly configService: ConfigService,
+  ) {}
 
   async getWeather(latitude, longitude): Promise<Weather> {
     const weatherConstant = this.configService.get('WEATHER');
-    let createWeatherResponse;
-    const response = await lastValueFrom(this.httpService.get(weatherConstant.WEATHER_FORCAST + `?lat=${latitude}&lon=${longitude}&appid=${weatherConstant.APP_ID}`).pipe(
-      map(response => response.data))
+    let createWeatherResponse = {};
+    const response = await lastValueFrom(
+      this.httpService
+        .get(
+          weatherConstant.WEATHER_FORCAST +
+            `?lat=${latitude}&lon=${longitude}&appid=${weatherConstant.APP_ID}`,
+        )
+        .pipe(map((response) => response.data)),
     );
     createWeatherResponse = {
       url: weatherConstant.WEATHER_FORCAST,
       response: JSON.stringify(response),
-      timestamp: Date.now()
-    }
+      timestamp: Date.now(),
+    };
     return await this.weatherModel.create(createWeatherResponse);
   }
 
