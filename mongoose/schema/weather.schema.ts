@@ -10,16 +10,14 @@ export type WeatherDocument = Weather & Document;
 
 @Schema()
 export class Weather {
+  @Prop()
+  url: string;
 
-    @Prop()
-    url: string;
+  @Prop()
+  response: string;
 
-    @Prop()
-    response: string;
-
-    @Prop()
-    timestamp: string;
-
+  @Prop()
+  timestamp: string;
 }
 
 export const WeatherSchema = SchemaFactory.createForClass(Weather);
