@@ -4,10 +4,12 @@ import { map, lastValueFrom } from 'rxjs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nestjs/common';
 import { Weather, WeatherDocument } from '../../mongoose/schema/weather.schema';
 
 @Injectable()
 export class WeatherService {
+  private readonly logger = new Logger(WeatherService.name);
   constructor(
     private readonly httpService: HttpService,
     @InjectModel(Weather.name)
@@ -31,6 +33,7 @@ export class WeatherService {
       response: JSON.stringify(response),
       timestamp: Date.now(),
     };
+    this.logger.log(createWeatherResponse);
     return await this.weatherModel.create(createWeatherResponse);
   }
 

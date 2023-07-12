@@ -7,7 +7,7 @@
 
 import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
 import { HelperService } from '../util/helper/helper.service';
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable({ scope: Scope.DEFAULT })
 export class AppLogger extends ConsoleLogger {
   constructor(private readonly helperService: HelperService) {
     // required for constructor of derived classes
